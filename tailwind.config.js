@@ -1,0 +1,51 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+    content: ['./public/**/*.html', './src/**/*.{js,jsx,ts,tsx,vue}'],
+    theme: {
+        extend: {
+            colors: {
+                grey: {
+                    DEFAULT: '#e6e6e6',
+                    dark: '#4a4a4a',
+                    light: '#f5f5f5'
+                },
+                yellow: {
+                    DEFAULT: '#ffd000',
+                    100: '#f6f2dd'
+                },
+                green: {
+                    DEFAULT: '#73a46e',
+                    light: '#edf7e7'
+                },
+                red: {
+                    DEFAULT: '#d55b60',
+                    light: '#ffdcd9'
+                },
+                blue: {
+                    DEFAULT: '#409cdd',
+                    light: '#e3edf3'
+                }
+            },
+            screens: {
+                xs: '420px',
+                // => @media (min-width: 420px) { ... }
+
+                sm: '640px',
+                // => @media (min-width: 640px) { ... }
+
+                md: '768px',
+                // => @media (min-width: 768px) { ... }
+
+                lg: '1024px',
+                // => @media (min-width: 1024px) { ... }
+
+                xl: '1280px',
+                // => @media (min-width: 1280px) { ... }
+
+                '2xl': '1536px'
+                // => @media (min-width: 1536px) { ... }
+            }
+        }
+    },
+    plugins: []
+};
