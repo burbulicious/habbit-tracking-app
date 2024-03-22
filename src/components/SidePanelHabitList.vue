@@ -11,7 +11,7 @@ const addHabitBtnVisible = ref(true);
 const dataKey = 'habitsData';
 
 const data = ref(
-  getDataFromLocalStorage(dataKey) || [
+  (getDataFromLocalStorage(dataKey).length !== 0 && getDataFromLocalStorage(dataKey)) || [
     {
       title: 'Example: Wash the dishes every days',
       streakDays: 0,
