@@ -43,7 +43,7 @@ const handleEdit = () => {
   <div :class="{ 'large-habit-card': isLarge, 'small-habit-card': !isLarge, active: isActive }">
     <div class="flex flex-row items-center w-full h-6" :class="{ 'mb-2': isLarge }">
       <h4 class="pr-3 flex-grow" :class="{ h4: isLarge, 'text-green': isCompleted }">{{ title }}</h4>
-      <StreakLabel :isLarge="isLarge" :streakDays="streakDays" v-if="streakDays > 1 && isActive" />
+      <StreakLabel :isLarge="isLarge" :streakDays="streakDays" v-if="streakDays > 1" />
     </div>
     <div v-if="isLarge" class="flex flex-row items-center">
       <div class="flex flex-row items-center flex-grow pr-3">

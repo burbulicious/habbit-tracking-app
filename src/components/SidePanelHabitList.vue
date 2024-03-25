@@ -13,7 +13,7 @@ const dataKey = 'habitsData';
 const data = ref(
   (getDataFromLocalStorage(dataKey).length !== 0 && getDataFromLocalStorage(dataKey)) || [
     {
-      title: 'Example: Wash the dishes every days',
+      title: 'Example Habit ',
       streakDays: 0,
       days: [
         { date: '2024-03-01', status: true },
@@ -23,12 +23,12 @@ const data = ref(
       ]
     },
     {
-      title: 'Example: Wash the dishes every days',
+      title: 'Example Habit 2',
       streakDays: 0,
       days: [
         { date: '2024-03-01', status: true },
         { date: '2024-03-02', status: true },
-        { date: '2024-03-08', status: false },
+        { date: '2024-03-08', status: true },
         { date: '2024-03-12', status: true }
       ]
     }
@@ -45,14 +45,42 @@ const saveNewItem = habit => {
   storeDataInLocalStorage(dataKey, data.value);
 };
 
-const handleActiveState = (index, value) => {
-  const updatedData = [...data.value];
-  updatedData[index].days = updatedData[index].days.map(day => {
+const updateHabitStatus = (updatedData, index, value) => {
+  let updatedDays = [];
+  updatedDays = updatedData[index].days.map(day => {
     if (day.date === today.value) {
       return { ...day, status: value };
     }
     return day;
   });
+  return updatedDays;
+};
+const countStreakDays = updatedData => {
+  let newData = [];
+  newData = updatedData.map(item => {
+    let streakCount = 0;
+    const updatedItem = { ...item };
+    for (let i = item.days.length - 1; i >= 0; i -= 1) {
+      if (item.days[i].date !== today.value) {
+        if (item.days[i].status) {
+          streakCount += 1;
+        } else {
+          break;
+        }
+      } else if (item.days[i].date === today.value && item.days[i].status) {
+        streakCount += 1;
+      }
+    }
+    updatedItem.streakDays = streakCount;
+    return updatedItem;
+  });
+  return newData;
+};
+
+const handleActiveState = (index, value) => {
+  let updatedData = [...data.value];
+  updatedData[index].days = updateHabitStatus(updatedData, index, value);
+  updatedData = countStreakDays(updatedData);
   data.value = updatedData;
   storeDataInLocalStorage(dataKey, data.value);
 };
