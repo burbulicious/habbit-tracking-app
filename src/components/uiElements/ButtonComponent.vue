@@ -1,5 +1,5 @@
 <script setup>
-defineProps({
+const props = defineProps({
   btnText: {
     type: String,
     default: 'Button text'
@@ -12,9 +12,20 @@ defineProps({
   isSecondary: {
     type: Boolean,
     default: false
+  },
+  outlined: {
+    type: Boolean,
+    default: true
   }
 });
+
+let btnClasses;
+if (props.outlined) {
+  btnClasses = `btn btn__${props.colour}${props.isSecondary ? '__outlined' : ''}`;
+} else {
+  btnClasses = `btn-inline btn-inline__${props.colour} text-base`;
+}
 </script>
 <template>
-  <button type="button" class="btn" :class="`btn__${colour}${isSecondary ? '__outlined' : ''}`">{{ btnText }}</button>
+  <button type="button" :class="btnClasses">{{ btnText }}</button>
 </template>

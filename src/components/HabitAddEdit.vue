@@ -71,7 +71,7 @@ onMounted(() => {
 }
 
 .small-new-habit-card {
-  @apply px-3 py-[10px] border-r-grey-850 border-r h-11 flex items-center;
+  @apply px-3 py-4 border-r-grey-850 border-r h-auto flex items-start;
 }
 
 input[type='text'] {

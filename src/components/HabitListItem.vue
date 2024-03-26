@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import Toggle from './uiElements/ToggleElement.vue';
 import StreakLabel from './uiElements/StreakLabel.vue';
 
@@ -37,13 +37,20 @@ const handleDelete = () => {
 const handleEdit = () => {
   emits('onEdit');
 };
+
+watch(
+  () => props.isCompleted,
+  newValue => {
+    isActive.value = newValue;
+  }
+);
 </script>
 
 <template>
   <div :class="{ 'large-habit-card': isLarge, 'small-habit-card': !isLarge, active: isActive }">
     <div class="flex flex-row items-center w-full h-6" :class="{ 'mb-2': isLarge }">
-      <h4 class="pr-3 flex-grow" :class="{ h4: isLarge, 'text-green': isCompleted }">{{ title }}</h4>
-      <StreakLabel :isLarge="isLarge" :streakDays="streakDays" v-if="streakDays > 1" />
+      <h4 class="pr-3 flex-grow" :class="{ h4: isLarge }">{{ title }}</h4>
+      <StreakLabel :isLarge="isLarge" :streakDays="streakDays" v-if="streakDays > 0" />
     </div>
     <div v-if="isLarge" class="flex flex-row items-center">
       <div class="flex flex-row items-center flex-grow pr-3">
@@ -84,6 +91,16 @@ const handleEdit = () => {
 }
 
 .small-habit-card {
-  @apply px-3 py-[10px] border-r-grey-850 border-r h-11 flex items-center;
+  @apply px-3 py-[10px] border-r-grey-850 border-r  flex items-center m-0 text-white;
+
+  h4 {
+    @apply text-white;
+  }
+
+  &.active {
+    h4 {
+      @apply text-green;
+    }
+  }
 }
 </style>
