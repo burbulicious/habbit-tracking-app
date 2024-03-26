@@ -1,26 +1,43 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import IconClose from './icons/IconClose.vue';
 import handleKeyDown from '../composables/keyDownHandler';
 
-defineProps({
+const props = defineProps({
   isLarge: {
     type: Boolean,
     default: true
+  },
+  saveBtnTitle: {
+    type: String,
+    default: 'Add'
+  },
+  prefilledText: {
+    type: String,
+    default: ''
   }
 });
 
-const habitTitle = ref('');
+const inputField = ref(null);
+
+const habitTitle = ref(props.prefilledText);
+
 const emits = defineEmits(['saveItem', 'cancel']);
 
 const saveItem = () => {
   emits('saveItem', habitTitle);
 };
+
 const cancel = () => {
   emits('cancel');
 };
+
 handleKeyDown(cancel, 'Escape');
 handleKeyDown(saveItem, 'Enter');
+
+onMounted(() => {
+  inputField.value.focus();
+});
 </script>
 
 <template>
@@ -32,10 +49,16 @@ handleKeyDown(saveItem, 'Enter');
       <IconClose iconColour="white" class="w-4 h-4 top-2 right-2 absolute" />
     </button>
     <label class="w-full mb-3">
-      <input :class="{ large: isLarge }" type="text" v-model="habitTitle" placeholder="Your new habit" />
+      <input
+        :class="{ large: isLarge }"
+        type="text"
+        ref="inputField"
+        v-model="habitTitle"
+        placeholder="Your new habit"
+      />
     </label>
     <button :disabled="!habitTitle" type="button" class="text-[14px] uppercase text-yellow" @click="saveItem">
-      Add
+      {{ saveBtnTitle }}
     </button>
   </div>
 </template>

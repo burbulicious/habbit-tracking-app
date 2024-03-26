@@ -1,39 +1,36 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import ButtonComponent from './uiElements/ButtonComponent.vue';
 import HabitListItem from './HabitListItem.vue';
-import HabitAddNewItem from './HabitAddNewItem.vue';
+import HabitAddEdit from './HabitAddEdit.vue';
 import { getDataFromLocalStorage, storeDataInLocalStorage } from '../utils/handleLocalStorage';
 import getToday from '../utils/getToday';
+import dataKey from '../utils/dataKeys';
 
 const today = ref(null);
 const addHabitBtnVisible = ref(true);
-const dataKey = 'habitsData';
 
 const data = ref(
   (getDataFromLocalStorage(dataKey).length !== 0 && getDataFromLocalStorage(dataKey)) || [
     {
-      title: 'Example Habit ',
-      streakDays: 0,
-      days: [
-        { date: '2024-03-01', status: true },
-        { date: '2024-03-02', status: true },
-        { date: '2024-03-08', status: false },
-        { date: '2024-03-12', status: true }
-      ]
-    },
-    {
-      title: 'Example Habit 2',
-      streakDays: 0,
+      title: 'Example Habit',
+      streakDays: 5,
       days: [
         { date: '2024-03-01', status: true },
         { date: '2024-03-02', status: true },
         { date: '2024-03-08', status: true },
-        { date: '2024-03-12', status: true }
+        { date: '2024-03-12', status: true },
+        { date: getToday(), status: true }
       ]
     }
   ]
 );
+
+const emits = defineEmits(['onEdit']);
+
+const reversedDate = computed(() => {
+  return [...data.value].reverse();
+});
 
 const toggleAddItem = () => {
   addHabitBtnVisible.value = !addHabitBtnVisible.value;
@@ -55,6 +52,7 @@ const updateHabitStatus = (updatedData, index, value) => {
   });
   return updatedDays;
 };
+
 const countStreakDays = updatedData => {
   let newData = [];
   newData = updatedData.map(item => {
@@ -100,9 +98,15 @@ const isCompletedToday = habit => {
   return habit.days.some(day => day.date === todayDate && day.status);
 };
 
-const deleteItem = index => {
-  data.value.splice(index, 1);
+const deleteItem = ReversedIndex => {
+  const dataIndex = data.value.length - 1 - ReversedIndex;
+  data.value.splice(dataIndex, 1);
   storeDataInLocalStorage(dataKey, data.value);
+};
+
+const editItem = ReversedIndex => {
+  const dataIndex = data.value.length - 1 - ReversedIndex;
+  emits('onEdit', dataIndex, data.value);
 };
 
 onMounted(updateToday);
@@ -114,9 +118,9 @@ onMounted(updateToday);
     <h2 class="h3 pb-5">{{ today }}</h2>
     <ButtonComponent btn-text="+ Add a new habit" colour="yellow" v-if="addHabitBtnVisible" @click="toggleAddItem" />
     <div class="py-5">
-      <HabitAddNewItem class="mb-2" v-if="!addHabitBtnVisible" @saveItem="saveNewItem" @cancel="toggleAddItem" />
+      <HabitAddEdit class="mb-2" v-if="!addHabitBtnVisible" @saveItem="saveNewItem" @cancel="toggleAddItem" />
       <HabitListItem
-        v-for="(habit, index) in data"
+        v-for="(habit, index) in reversedDate"
         :key="index"
         :isCompleted="isCompletedToday(habit)"
         :isLarge="true"
@@ -125,6 +129,7 @@ onMounted(updateToday);
         class="mb-2"
         @updateIsActive="handleActiveState(index, $event)"
         @onDelete="deleteItem(index)"
+        @onEdit="editItem(index)"
       />
     </div>
   </div>
