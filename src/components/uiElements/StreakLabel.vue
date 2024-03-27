@@ -24,4 +24,3 @@ const greenLight = tailwind.theme.extend.colors.green.light;
     </h5>
   </div>
 </template>
-<!-- <style scoped></style> -->

@@ -5,8 +5,23 @@ function getToday(shortDate = true) {
   }
   const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
   const formattedDate = today.toLocaleDateString('en-US', options);
-  const [weekday, day, month, year] = formattedDate.split(', ');
-  return { formattedDate, weekday, day, month, year };
+  const [weekday, currentMonthDay, year] = formattedDate.split(', ');
+  const [month, day] = currentMonthDay.split(' ');
+
+  return { formattedDate, weekday, month, day, year };
+}
+
+function getDay(date, shortDate = true) {
+  const newDate = new Date(date);
+  if (shortDate) {
+    return newDate.toISOString().split('T')[0];
+  }
+  const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+  const formattedDate = newDate.toLocaleDateString('en-US', options);
+  const [weekday, currentMonthDay, year] = formattedDate.split(', ');
+  const [month, day] = currentMonthDay.split(' ');
+
+  return { formattedDate, weekday, month, day, year };
 }
 
 function getWeekDays(startDate) {
@@ -17,7 +32,7 @@ function getWeekDays(startDate) {
     currentDate.setDate(startDate.getDate() + i);
     const weekday = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
     const day = currentDate.getDate();
-    const fullFormat = currentDate.toISOString().split('T')[0];
+    const fullFormat = currentDate.toLocaleDateString('lt-LT', { year: 'numeric', month: 'numeric', day: 'numeric' });
     days.push({ weekday, day, fullFormat });
   }
 
@@ -67,4 +82,4 @@ function isPast(date) {
   return targetDate.getTime() < today.getTime();
 }
 
-export { getToday, getThisWeek, getPrevWeek, getNextWeek, isFuture, isPast };
+export { getToday, getThisWeek, getPrevWeek, getNextWeek, isFuture, isPast, getDay };

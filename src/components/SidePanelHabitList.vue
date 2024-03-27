@@ -27,7 +27,7 @@ const toggleAddItem = () => {
 
 const saveNewItem = habit => {
   toggleAddItem();
-  data.value.push({ title: habit, streakDays: 0, days: [{ date: today.value, status: false }] });
+  data.value.push({ title: habit, streakDays: 0, days: [{ date: today.value, status: null }] });
   storeDataInLocalStorage(dataKey, data.value);
   emits('onChange', data.value);
 };
@@ -79,7 +79,7 @@ const updateToday = () => {
   data.value.forEach(item => {
     const hasTodayEntry = item.days.some(day => day.date === today.value);
     if (!hasTodayEntry) {
-      item.days.push({ date: today.value, status: false });
+      item.days.push({ date: today.value, status: null });
     }
   });
 };
