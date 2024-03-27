@@ -48,6 +48,17 @@ function getThisWeek() {
   return getWeekDays(startOfWeek);
 }
 
+function getCurrentWeekDays(date) {
+  const currentDate = new Date(date);
+  const dayOfWeek = currentDate.getDay();
+  const startDate = new Date(currentDate);
+
+  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  startDate.setDate(startDate.getDate() + diff);
+
+  return getWeekDays(startDate);
+}
+
 function getPrevWeek(date) {
   const startOfWeek = new Date(date);
   const diff = startOfWeek.getDate() - startOfWeek.getDay() - 6;
@@ -82,4 +93,4 @@ function isPast(date) {
   return targetDate.getTime() < today.getTime();
 }
 
-export { getToday, getThisWeek, getPrevWeek, getNextWeek, isFuture, isPast, getDay };
+export { getToday, getThisWeek, getPrevWeek, getNextWeek, isFuture, isPast, getDay, getCurrentWeekDays };

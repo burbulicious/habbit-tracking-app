@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { getToday, getThisWeek, getPrevWeek, getNextWeek, getDay } from '../utils/timeCalculations';
-import DaysListView from './WeekView.vue';
-import IconArrowLeft from '../components/icons/IconArrowLeft.vue';
-import HabitListItem from '../components/HabitListItem.vue';
+import { RouterView } from 'vue-router';
+import { getToday, getPrevWeek, getNextWeek, getDay, getCurrentWeekDays } from '../utils/timeCalculations';
+import IconArrowLeft from './icons/IconArrowLeft.vue';
+import HabitListItem from './HabitListItem.vue';
 import isCompletedToday from '../utils/isCompletedToday';
-import ButtonComponent from '../components/uiElements/ButtonComponent.vue';
-import HabitAddEdit from '../components/HabitAddEdit.vue';
+import ButtonComponent from './uiElements/ButtonComponent.vue';
+import HabitAddEdit from './HabitAddEdit.vue';
 import dataKey from '../utils/dataKeys';
 import { storeDataInLocalStorage } from '../utils/handleLocalStorage';
 
@@ -46,7 +46,7 @@ const updateToday = () => {
   calendarTitle.value = `${todayLong.value.month} ${todayLong.value.year}`;
   todayShort.value = getToday();
   selectedDate.value = todayShort.value;
-  visibleWeekDays.value = getThisWeek();
+  visibleWeekDays.value = getCurrentWeekDays(todayShort.value);
   currentWeekDaysIndex.value = getCurrentWeekDaysIndex();
 };
 
@@ -61,7 +61,7 @@ const prevWeek = () => {
 };
 
 const jumptToToday = () => {
-  visibleWeekDays.value = getThisWeek();
+  visibleWeekDays.value = getCurrentWeekDays(todayShort.value);
   updateSelectedDate();
 };
 
@@ -98,7 +98,7 @@ onMounted(() => {
       <div :class="habitListItemWidth">
         <div class="border-r border-b border-grey-850">
           <div class="flex flex-row justify-between px-5 py-3 items-center" :class="habitListItemHeight">
-            <RouterLink :to="`week/${todayShort}`">
+            <RouterLink :to="todayShort">
               <ButtonComponent btn-text="Today" colour="white" :isSecondary="true" @click="jumptToToday" />
             </RouterLink>
             <div class="flex flex-row items-center">
@@ -128,11 +128,12 @@ onMounted(() => {
           />
         </div>
       </div>
-      <DaysListView
+
+      <RouterView
         :data="data"
         :visibleWeekDays="visibleWeekDays"
         :habitListItemHeight="habitListItemHeight"
-        :todayShort="todayShort"
+        :todayShort="selectedDate"
       />
     </div>
 

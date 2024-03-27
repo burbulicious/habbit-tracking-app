@@ -5,7 +5,7 @@ import EditModal from './components/EditModal.vue';
 import dataKey from './utils/dataKeys';
 import { getDataFromLocalStorage, storeDataInLocalStorage } from './utils/handleLocalStorage';
 import { getToday } from './utils/timeCalculations';
-import CalendarView from './views/CalendarView.vue';
+import CalendarComponent from './components/CalendarComponent.vue';
 
 const data = ref(
   (getDataFromLocalStorage(dataKey).length !== 0 && getDataFromLocalStorage(dataKey)) || [
@@ -50,8 +50,7 @@ const handleDataChange = value => {
 <template>
   <div class="w-full h-[100vh] flex flex-row items-stretch text-white">
     <SidePanelHabitList @onEdit="editItem" :habitsData="data" @onChange="handleDataChange" />
-    <CalendarView :habitsData="data" />
-    <!-- <div class="bg-grey-900 min-w-[236px] flex-none h-full"></div> -->
+    <CalendarComponent :habitsData="data" />
   </div>
   <EditModal v-if="showEditModal" :itemData="data[editIndex]" @closeModal="toggleModal" @saveItem="saveItem" />
 </template>
