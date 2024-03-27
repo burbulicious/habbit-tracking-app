@@ -59,20 +59,20 @@ function getCurrentWeekDays(date) {
   return getWeekDays(startDate);
 }
 
-function getPrevWeek(date) {
-  const startOfWeek = new Date(date);
-  const diff = startOfWeek.getDate() - startOfWeek.getDay() - 6;
-  startOfWeek.setDate(diff);
+function getPrevWeekDate(date) {
+  const currentDate = new Date(date);
+  const earlierDate = new Date(currentDate);
+  earlierDate.setDate(earlierDate.getDate() - 7);
 
-  return getWeekDays(startOfWeek);
+  return earlierDate.toLocaleDateString('lt-LT', { year: 'numeric', month: 'numeric', day: 'numeric' });
 }
 
-function getNextWeek(date) {
-  const startOfWeek = new Date(date);
-  const diff = startOfWeek.getDate() - startOfWeek.getDay() + 8;
-  startOfWeek.setDate(diff);
+function getNextWeekDate(date) {
+  const currentDate = new Date(date);
+  const futureDate = new Date(currentDate);
+  futureDate.setDate(futureDate.getDate() + 7);
 
-  return getWeekDays(startOfWeek);
+  return futureDate.toLocaleDateString('lt-LT', { year: 'numeric', month: 'numeric', day: 'numeric' });
 }
 
 function isFuture(date) {
@@ -93,4 +93,4 @@ function isPast(date) {
   return targetDate.getTime() < today.getTime();
 }
 
-export { getToday, getThisWeek, getPrevWeek, getNextWeek, isFuture, isPast, getDay, getCurrentWeekDays };
+export { getToday, getThisWeek, getPrevWeekDate, getNextWeekDate, isFuture, isPast, getDay, getCurrentWeekDays };

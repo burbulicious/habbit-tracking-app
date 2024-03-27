@@ -1,16 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Weekday from '../components/uiElements/WeekDay.vue';
 import CalendarCell from '../components/uiElements/CalendarCell.vue';
-import { isFuture } from '../utils/timeCalculations';
+import { isFuture, getCurrentWeekDays } from '../utils/timeCalculations';
 
 const props = defineProps({
   data: {
-    type: Object,
-    required: true
-  },
-  visibleWeekDays: {
     type: Object,
     required: true
   },
@@ -21,13 +17,21 @@ const props = defineProps({
   todayShort: {
     type: String,
     default: ''
+  },
+  selectedDateProp: {
+    type: String,
+    default: ''
   }
 });
 
+const emits = defineEmits(['onPathChange']);
+
 const route = useRoute();
-const visibleWeekDaysRef = ref(props.visibleWeekDays);
+const visibleWeekDays = ref([]);
 const dataRef = ref(props.data);
 const selectedDate = ref(route.params.selectedDate);
+
+visibleWeekDays.value = getCurrentWeekDays(selectedDate.value);
 
 const getDayStatus = (date, index) => {
   const habitData = dataRef.value[index];
@@ -40,9 +44,9 @@ const getDayStatus = (date, index) => {
 };
 
 watch(
-  () => props.visibleWeekDays,
+  () => visibleWeekDays.value,
   newValue => {
-    visibleWeekDaysRef.value = newValue;
+    visibleWeekDays.value = newValue;
   }
 );
 
@@ -57,20 +61,26 @@ watch(
   () => route.params.selectedDate,
   newValue => {
     selectedDate.value = newValue;
+    visibleWeekDays.value = getCurrentWeekDays(selectedDate.value);
+    emits('onPathChange', selectedDate.value);
   }
 );
+
+onMounted(() => {
+  emits('onPathChange', selectedDate.value);
+});
 </script>
 
 <template>
   <div class="flex-grow">
-    {{ selectedDate }}
     <div class="flex flex-row items-stretch border-b border-grey-850">
       <Weekday
-        v-for="(day, index) in visibleWeekDaysRef"
+        v-for="(day, index) in visibleWeekDays"
         :key="index"
         :day="day"
         :active="day.fullFormat === todayShort"
         :elementHeight="habitListItemHeight"
+        :selected="day.fullFormat === selectedDate"
       />
     </div>
     <div

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { RouterView } from 'vue-router';
-import { getToday, getPrevWeek, getNextWeek, getDay, getCurrentWeekDays } from '../utils/timeCalculations';
+import { getToday, getPrevWeekDate, getNextWeekDate, getDay } from '../utils/timeCalculations';
 import IconArrowLeft from './icons/IconArrowLeft.vue';
 import HabitListItem from './HabitListItem.vue';
 import isCompletedToday from '../utils/isCompletedToday';
@@ -25,44 +25,13 @@ const data = ref(props.habitsData);
 const todayLong = ref('');
 const todayShort = ref('');
 const calendarTitle = ref('');
-const currentWeekDaysIndex = ref(0);
-const visibleWeekDays = ref([]);
-const selectedDate = ref(new Date());
 const addHabitBtnVisible = ref(true);
-
-const getCurrentWeekDaysIndex = () => {
-  return visibleWeekDays.value.findIndex(item => item.fullFormat === selectedDate.value);
-};
-
-const updateSelectedDate = () => {
-  const { month, year } = getDay(visibleWeekDays.value[currentWeekDaysIndex.value].fullFormat, false);
-  calendarTitle.value = `${month} ${year}`;
-  selectedDate.value = getDay(visibleWeekDays.value[currentWeekDaysIndex.value].fullFormat);
-};
+const selectedDate = ref('');
 
 const updateToday = () => {
-  const useShortDate = false;
-  todayLong.value = getToday(useShortDate);
+  todayLong.value = getToday(false);
   calendarTitle.value = `${todayLong.value.month} ${todayLong.value.year}`;
   todayShort.value = getToday();
-  selectedDate.value = todayShort.value;
-  visibleWeekDays.value = getCurrentWeekDays(todayShort.value);
-  currentWeekDaysIndex.value = getCurrentWeekDaysIndex();
-};
-
-const nextWeek = () => {
-  visibleWeekDays.value = getNextWeek(selectedDate.value);
-  updateSelectedDate();
-};
-
-const prevWeek = () => {
-  visibleWeekDays.value = getPrevWeek(selectedDate.value);
-  updateSelectedDate();
-};
-
-const jumptToToday = () => {
-  visibleWeekDays.value = getCurrentWeekDays(todayShort.value);
-  updateSelectedDate();
 };
 
 const toggleAddItem = () => {
@@ -71,15 +40,35 @@ const toggleAddItem = () => {
 
 const saveNewItem = habit => {
   toggleAddItem();
-  data.value.push({ title: habit, streakDays: 0, days: [{ date: todayShort.value, status: false }] });
+  data.value.push({ title: habit, streakDays: 0, days: [{ date: todayShort.value, status: null }] });
   storeDataInLocalStorage(dataKey, data.value);
   emits('onChange', data.value);
+};
+
+const handleSelectedItem = value => {
+  selectedDate.value = value;
+  const { month, year } = getDay(selectedDate.value, false);
+  calendarTitle.value = `${month} ${year}`;
+};
+
+const prevWeek = () => {
+  selectedDate.value = getPrevWeekDate(selectedDate.value);
+};
+
+const nextWeek = () => {
+  selectedDate.value = getNextWeekDate(selectedDate.value);
 };
 
 watch(
   () => props.habitsData,
   newValue => {
     data.value = newValue;
+  }
+);
+watch(
+  () => selectedDate.value,
+  newValue => {
+    selectedDate.value = newValue;
   }
 );
 
@@ -99,16 +88,14 @@ onMounted(() => {
         <div class="border-r border-b border-grey-850">
           <div class="flex flex-row justify-between px-5 py-3 items-center" :class="habitListItemHeight">
             <RouterLink :to="todayShort">
-              <ButtonComponent btn-text="Today" colour="white" :isSecondary="true" @click="jumptToToday" />
+              <ButtonComponent btn-text="Today" colour="white" :isSecondary="true" />
             </RouterLink>
             <div class="flex flex-row items-center">
               <RouterLink :to="selectedDate" class="px-2">
-                <button type="button" @click="prevWeek"><IconArrowLeft :iconColour="'white'" /></button>
+                <IconArrowLeft :iconColour="'white'" @click="prevWeek" />
               </RouterLink>
               <RouterLink :to="selectedDate" class="px-2">
-                <button type="button" @click="nextWeek">
-                  <IconArrowLeft :iconColour="'white'" :rotation="'right'" />
-                </button>
+                <IconArrowLeft :iconColour="'white'" :rotation="'right'" @click="nextWeek" />
               </RouterLink>
             </div>
           </div>
@@ -131,9 +118,10 @@ onMounted(() => {
 
       <RouterView
         :data="data"
-        :visibleWeekDays="visibleWeekDays"
         :habitListItemHeight="habitListItemHeight"
-        :todayShort="selectedDate"
+        :todayShort="todayShort"
+        :selectedDateProp="selectedDate"
+        @onPathChange="handleSelectedItem"
       />
     </div>
 

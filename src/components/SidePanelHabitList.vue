@@ -100,7 +100,7 @@ onMounted(updateToday);
 
 <template>
   <div class="bg-grey-900 w-[400px] flex-none h-full px-5 py-8">
-    <h1 class="h1 pb-2">Your habits</h1>
+    <h1 class="h1 pb-2">Your habits today</h1>
     <h2 class="h3 pb-5">{{ today }}</h2>
     <div class="py-5">
       <HabitListItem
