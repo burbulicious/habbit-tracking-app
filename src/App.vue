@@ -11,7 +11,7 @@ const data = ref(
   (getDataFromLocalStorage(dataKey).length !== 0 && getDataFromLocalStorage(dataKey)) || [
     {
       title: 'Example Habit',
-      streakDays: 0,
+      streakDays: 1,
       days: [
         { date: '2024-03-01', status: true },
         { date: '2024-03-02', status: true },
@@ -40,6 +40,7 @@ const saveItem = value => {
   toggleModal();
   data.value[editIndex.value].title = value;
   storeDataInLocalStorage(dataKey, data.value);
+  data.value = getDataFromLocalStorage(dataKey);
 };
 
 const handleDataChange = value => {
@@ -48,9 +49,9 @@ const handleDataChange = value => {
 </script>
 
 <template>
-  <div class="w-full h-[100vh] flex flex-row items-stretch text-white">
+  <div class="w-full h-[100vh] max-h-[100vh] flex flex-row items-stretch text-white">
     <SidePanelHabitList @onEdit="editItem" :habitsData="data" @onChange="handleDataChange" />
-    <CalendarComponent :habitsData="data" />
+    <CalendarComponent :habitsData="data" @onChange="handleDataChange" />
   </div>
   <EditModal v-if="showEditModal" :itemData="data[editIndex]" @closeModal="toggleModal" @saveItem="saveItem" />
 </template>

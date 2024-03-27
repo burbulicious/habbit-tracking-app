@@ -27,33 +27,29 @@ const props = defineProps({
   }
 });
 
+const emits = defineEmits(['onStatusChange']);
+
 const green = tailwind.theme.extend.colors.green.DEFAULT;
 const red = tailwind.theme.extend.colors.red.DEFAULT;
 const status = ref(props.status);
-const statusMessage = ref('');
-const updateStatusMessage = () => {
-  if (status.value === null) {
-    statusMessage.value = ' ';
-  } else if (status.value === true) {
-    statusMessage.value = 'V';
-  } else {
-    statusMessage.value = 'X';
-  }
+
+const updateStatus = () => {
+  status.value = !status.value;
+  emits('onStatusChange', status.value, props.day.fullFormat);
 };
-
-updateStatusMessage();
-
 watch(
   () => props.status,
   newValue => {
     status.value = newValue;
-    updateStatusMessage();
   }
 );
 </script>
 
 <template>
-  <div
+  <button
+    type="button"
+    @click="updateStatus"
+    :disabled="isFuture"
     :class="[
       {
         'bg-grey-900': isFuture,
@@ -70,5 +66,5 @@ watch(
         <IconClose :iconColour="red" v-if="status === false" />
       </div>
     </div>
-  </div>
+  </button>
 </template>

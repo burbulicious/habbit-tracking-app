@@ -24,7 +24,7 @@ const props = defineProps({
   }
 });
 
-const emits = defineEmits(['onPathChange']);
+const emits = defineEmits(['onPathChange', 'onStatusChange']);
 
 const route = useRoute();
 const visibleWeekDays = ref([]);
@@ -41,6 +41,10 @@ const getDayStatus = (date, index) => {
   }
 
   return null;
+};
+
+const handleStatusChange = (value, day, index) => {
+  emits('onStatusChange', value, day.fullFormat, index);
 };
 
 watch(
@@ -96,6 +100,7 @@ onMounted(() => {
         :today="todayShort"
         :status="getDayStatus(day.fullFormat, habitIndex)"
         :elementHeight="habitListItemHeight"
+        @onStatusChange="value => handleStatusChange(value, day, habitIndex)"
       />
     </div>
   </div>

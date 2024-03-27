@@ -18,8 +18,8 @@ const greenLight = tailwind.theme.extend.colors.green.light;
 <template>
   <div class="flex flex-row items-center rounded bg-green py-1 px-2">
     <IconFire :iconColour="greenLight" class="w-3 h-3" />
-    <h5 class="h5 text-green-light pl-1 text-sm">
-      <span class="font-base">{{ streakDays }}</span>
+    <h5 class="h5 text-green-light pl-1 md:text-sm">
+      <span>{{ streakDays }}</span>
       <span v-if="isLarge">{{ streakDays === 1 ? ' day' : ' days' }} streak</span>
     </h5>
   </div>

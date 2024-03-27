@@ -18,12 +18,13 @@ const props = defineProps({
   },
   streakDays: {
     type: Number,
-    default: 5
+    default: 0
   }
 });
 const emits = defineEmits(['updateIsActive', 'onDelete', 'onEdit']);
 
 const isActive = ref(props.isCompleted);
+const streakDaysCount = ref(props.streakDays);
 
 const handleToggleUpdate = value => {
   isActive.value = value;
@@ -44,16 +45,28 @@ watch(
     isActive.value = newValue;
   }
 );
+
+watch(
+  () => props.streakDays,
+  newValue => {
+    streakDaysCount.value = newValue;
+  }
+);
 </script>
 
 <template>
   <div :class="{ 'large-habit-card': isLarge, 'small-habit-card': !isLarge, active: isActive }">
-    <div class="flex flex-row items-center w-full h-6" :class="{ 'mb-2': isLarge }">
-      <h4 class="pr-3 flex-grow" :class="{ h4: isLarge }">{{ title }}</h4>
-      <StreakLabel :isLarge="isLarge" :streakDays="streakDays" v-if="streakDays > 0" />
+    <div class="flex flex-col md:flex-row md:items-center w-full md:h-6" :class="{ 'md:mb-2': isLarge }">
+      <h4 class="md:pr-3 flex-grow md:mb-0 md:order-1 order-2" :class="{ 'h4 mb-4': isLarge }">{{ title }}</h4>
+      <StreakLabel
+        :isLarge="isLarge"
+        :streakDays="streakDaysCount"
+        v-if="streakDaysCount > 0"
+        class="w-fit md:order-2 order-1 md:mb-0 mb-2"
+      />
     </div>
-    <div v-if="isLarge" class="flex flex-row items-center">
-      <div class="flex flex-row items-center flex-grow pr-3">
+    <div v-if="isLarge" class="flex flex-col md:flex-row md:items-center">
+      <div class="flex flex-row items-center flex-grow md:pr-3 md:pb-0 pb-3">
         <Toggle :isActive="isActive" @updateIsActive="handleToggleUpdate"></Toggle>
         <h5 class="h5 text-white text-opacity-70 pl-2">
           {{ isActive ? 'Completed today' : 'Mark as completed today' }}
@@ -76,7 +89,7 @@ watch(
   }
 
   .action-btns {
-    @apply opacity-0 transition-all duration-300;
+    @apply md:opacity-0 transition-all duration-300;
   }
 
   &:hover {

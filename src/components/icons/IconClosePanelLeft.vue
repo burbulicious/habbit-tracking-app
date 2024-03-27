@@ -2,7 +2,7 @@
 defineProps({
   iconColour: {
     type: String,
-    required: true
+    default: 'white'
   }
 });
 </script>

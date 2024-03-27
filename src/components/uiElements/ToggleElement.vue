@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
   isActive: {
@@ -15,6 +15,13 @@ const toggleState = () => {
   isActive.value = !isActive.value;
   emits('updateIsActive', isActive.value);
 };
+
+watch(
+  () => props.isActive,
+  newValue => {
+    isActive.value = newValue;
+  }
+);
 </script>
 <template>
   <button class="toggle-button" :class="{ active: isActive }" @click="toggleState" type="button"></button>
